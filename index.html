@@ -72,7 +72,16 @@ footer{text-align:center;padding:30px;color:#a99b7e;border-top:1px solid #59472d
 <p>Luxury is a lifestyle.</p>
 <p>All prices in AUD.</p>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://pvdlimynbhubtgfgiqgr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_aIHag4XdZUz3Xn__jClf-g_hBv5aDep";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
 const items=[
 ["Classic Leather Handbag","Unbranded luxury",189,"👜"],
 ["Designer Tote Bag","Authentic designer - placeholder",1450,"👝"],
@@ -99,7 +108,46 @@ items.forEach((item,i)=>{
  selector.appendChild(option);
 });
 
-document.getElementById("orderForm").addEventListener("submit", function(e) {
+document.getElementById("orderForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const productIndex = Number(document.getElementById("product").value);
+    const quantity = Number(document.getElementById("quantity").value);
+    const message = document.getElementById("message").value.trim();
+    const result = document.getElementById("result");
+
+    if (!name || !email || !items[productIndex] ||
+        !Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
+        result.textContent = "Please check your details and try again.";
+        return;
+    }
+
+    const chosen = items[productIndex];
+
+    result.textContent = "Submitting your enquiry...";
+
+    const { error } = await supabaseClient
+        .from("orders")
+        .insert([{
+            customer_name: name,
+            customer_email: email,
+            product_name: chosen[0],
+            quantity: quantity,
+            total: chosen[2] * quantity,
+            customer_message: message
+        }]);
+
+    if (error) {
+        console.error(error);
+        result.textContent = "Sorry, your enquiry could not be submitted. Please try again.";
+        return;
+    }
+
+    result.textContent = "Your enquiry has been submitted successfully!";
+    e.target.reset();
+});
     e.preventDefault();
 
     const name = document.getElementById("name").value.trim();
