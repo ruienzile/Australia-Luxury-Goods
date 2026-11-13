@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Australia Luxury Goods</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0b0b;color:#eee;font-family:Arial,sans-serif}
+header{text-align:center;padding:28px;background:#15130f;border-bottom:1px solid #bd9955}
+header h1{font-family:Georgia,serif;color:#d8b66d;letter-spacing:3px}
+header p{font-size:10px;letter-spacing:4px}
+nav{text-align:center;padding:15px}
+button{cursor:pointer;background:#d8b66d;color:#111;border:0;padding:12px 18px;margin:5px}
+.hero{text-align:center;padding:65px 15px;background:linear-gradient(135deg,#332718,#090909)}
+.hero h2{font:42px Georgia,serif;color:#e6ca8c}
+.hero p{color:#c5b99f}
+section{padding:30px 16px;max-width:1000px;margin:auto}
+h2{font-family:Georgia,serif}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
+.product{background:#191714;border:1px solid #59472d;padding:17px}
+.product .photo{font-size:55px;text-align:center;padding:20px}
+.product h3{font-family:Georgia,serif}
+.price{color:#dfbd77}
+form{max-width:550px;background:#191714;padding:20px;border:1px solid #59472d}
+input,textarea,select{width:100%;padding:12px;margin:7px 0 15px;background:#0d0c0a;color:white;border:1px solid #695638}
+label{color:#dfbd77;font-size:13px}
+footer{text-align:center;padding:30px;color:#a99b7e;border-top:1px solid #59472d}
+#result{color:#dfbd77;line-height:1.8}
+</style>
+</head>
+<body>
+<header>
+<h1>AUSTRALIA LUXURY GOODS</h1>
+<p>AUTHENTIC LUXURY · TIMELESS STYLE</p>
+</header>
+<nav>
+<a href="#collection"><button>SHOP COLLECTION</button></a>
+<a href="#orders"><button>ORDER ENQUIRY</button></a>
+</nav>
+<div class="hero">
+<p>THE LUXURY COLLECTION</p>
+<h2>Discover Luxury.</h2>
+<p>Exclusive style. Timeless accessories. Your next favourite find.</p>
+</div>
+<section id="collection">
+<h2>Our Collection</h2>
+<p>Discover our selection of luxury and everyday accessories.</p>
+<div class="products" id="products"></div>
+</section>
+<section id="orders">
+<h2>Create an Order Enquiry</h2>
+<p>Select your products and tell us what you are looking for.</p>
+<form id="orderForm">
+<label>Your name</label>
+<input id="name" required maxlength="80">
+<label>Email</label>
+<input id="email" type="email" required>
+<label>Product</label>
+<select id="product"></select>
+<label>Quantity</label>
+<input id="quantity" type="number" min="1" max="20" value="1">
+<label>Additional message</label>
+<textarea id="message" rows="4"></textarea>
+<button type="submit">SUBMIT ENQUIRY</button>
+<div id="result"></div>
+</form>
+</section>
+<footer>
+<h3>AUSTRALIA LUXURY GOODS</h3>
+<p>Luxury is a lifestyle.</p>
+<p>All prices in AUD.</p>
+</footer>
+<script>
+const items=[
+["Classic Leather Handbag","Unbranded luxury",189,"👜"],
+["Designer Tote Bag","Authentic designer - placeholder",1450,"👝"],
+["Gold Statement Necklace","Unbranded luxury",59,"📿"],
+["Classic Sunglasses","Unbranded luxury",49,"🕶️"],
+["Pearl Hair Clip","Unbranded luxury",19,"🎀"],
+["Designer Silk Scarf","Authentic designer - placeholder",350,"🧣"]
+];
+const money=n=>new Intl.NumberFormat("en-AU",{style:"currency",currency:"AUD"}).format(n);
+const products=document.getElementById("products");
+const selector=document.getElementById("product");
+items.forEach((item,i)=>{
+ const card=document.createElement("div");
+ card.className="product";
+ card.innerHTML=`<div class="photo">${item[3]}</div><h3>${item[0]}</h3><p>${item[1]}</p><p class="price">${money(item[2])}</p><button type="button">ENQUIRE ABOUT THIS ITEM</button>`;
+ card.querySelector("button").onclick=()=>{
+ selector.value=String(i);
+ document.getElementById("orders").scrollIntoView({behavior:"smooth"});
+ };
+ products.appendChild(card);
+ const option=document.createElement("option");
+ option.value=i;
+ option.textContent=item[0]+" - "+money(item[2]);
+ selector.appendChild(option);
+});
+document.getElementById("orderForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ document.getElementById("result").textContent=
+ "Your enquiry form is working as a preview, but it has not been sent. The secure ticket database and customer notifications must be connected before accepting real orders.";
+});
+</script>
+</body>
+</html>
