@@ -98,7 +98,71 @@ items.forEach((item,i)=>{
  option.textContent=item[0]+" - "+money(item[2]);
  selector.appendChild(option);
 });
-document.getElementById("orderForm").addEventListener("submit",e=>{
+
+document.getElementById("orderForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const productIndex = Number(document.getElementById("product").value);
+    const quantity = Number(document.getElementById("quantity").value);
+    const message = document.getElementById("message").value.trim();
+
+    const result = document.getElementById("result");
+
+    if (!name || !email || !Number.isInteger(productIndex) ||
+        !items[productIndex] || !Number.isInteger(quantity) ||
+        quantity < 1 || quantity > 20) {
+        result.textContent = "Please check your details and try again.";
+        return;
+    }
+
+    let tickets = [];
+
+    try {
+        tickets = JSON.parse(localStorage.getItem("alg_tickets") || "[]");
+        if (!Array.isArray(tickets)) tickets = [];
+    } catch (error) {
+        result.textContent = "Could not read saved tickets. Please try again.";
+        return;
+    }
+
+    const nextNumber = Math.max(0, ...tickets.map(t => Number(t.number) || 0)) + 1;
+    const ticketID = "ALG-" + String(nextNumber).padStart(4, "0");
+
+    const chosen = items[productIndex];
+
+    const ticket = {
+        number: nextNumber,
+        id: ticketID,
+        name: name,
+        email: email,
+        items: [{
+            name: chosen[0],
+            price: chosen[2],
+            qty: quantity
+        }],
+        total: chosen[2] * quantity,
+        message: message,
+        status: "Pending",
+        reply: "",
+        date: new Date().toISOString()
+    };
+
+    try {
+        tickets.push(ticket);
+        localStorage.setItem("alg_tickets", JSON.stringify(tickets));
+
+        result.textContent =
+            "Your enquiry " + ticketID +
+            " has been saved on this device. Please keep your ticket number.";
+
+        e.target.reset();
+    } catch (error) {
+        result.textContent = "Unable to save your ticket. Please try again.";
+    }
+});
+("submit",e=>{
  e.preventDefault();
  document.getElementById("result").textContent=
  "Your enquiry form is working as a preview, but it has not been sent. The secure ticket database and customer notifications must be connected before accepting real orders.";
